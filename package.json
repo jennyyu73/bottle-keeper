@@ -1,22 +1,14 @@
 {
-  "name": "bottle-keeper",
+  "name": "webhook",
   "version": "1.0.0",
-  "description": "Messenger bot to allow for anonymous one-time messaging",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "node index.js",
     "start": "node index.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/jennyyu73/bottle-keeper.git"
-  },
-  "author": "Jun Kim, Jenny Yu",
+  "author": "Jun Kim and Jenny Yu",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/jennyyu73/bottle-keeper/issues"
-  },
-  "homepage": "https://github.com/jennyyu73/bottle-keeper#readme",
   "dependencies": {
     "body-parser": "^1.19.0",
     "express": "^4.17.1"
