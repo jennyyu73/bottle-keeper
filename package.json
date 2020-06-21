@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "node index.js",
-    "start": "node app.js index.js"
+    "start": "node index.js"
   },
   "author": "Jun Kim and Jenny Yu",
   "license": "ISC",
