@@ -34,7 +34,7 @@ function callSendAPI(sender_psid, response) {
       "id": sender_psid
     },
     "message": {
-        "text": response,
+        "text": "Hi",
         "quick_replies": [
             {
                 "content_type":"text",
