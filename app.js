@@ -9,7 +9,7 @@ function handleMessage(sender_psid, received_message) {
   let response;
 
   if (received_message.quick_reply) {
-    if(received_message.quick_reply === "findBottleYes") {
+    if(received_message.quick_reply.payload === "findBottleYes") {
         response = {
             "recipient": {
               "id": sender_psid
@@ -19,7 +19,7 @@ function handleMessage(sender_psid, received_message) {
             }
         }
     }
-    else if (received_message.quick_reply === "findBottleNo") {
+    else if (received_message.quick_reply.payload === "findBottleNo") {
         response = {
             "recipient": {
               "id": sender_psid
