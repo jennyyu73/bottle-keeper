@@ -33,9 +33,18 @@ function callSendAPI(sender_psid, response) {
     "recipient": {
       "id": sender_psid
     },
-    "message": {
-        "text": "Hello, I am bot"
-    }
+    "message":{
+        "text": "Pick a color:",
+        "quick_replies":[
+          {
+            "content_type":"text",
+            "title":"Red",
+          },{
+            "content_type":"text",
+            "title":"Green",
+          }
+        ]
+      }
   }
   // Send the HTTP request to the Messenger Platform
   request({
