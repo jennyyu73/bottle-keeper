@@ -2,30 +2,32 @@ require('dotenv').config()
 const request = require('request');
 
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
-
+var writeMessageBool = false;
 // Handles messages events
 function handleMessage(sender_psid, received_message) {
 
   let response;
 
   if (received_message.quick_reply) {
-    if(received_message.quick_reply.payload === "writeBottleYes") {
+    if(received_message.quick_reply.payload === "findBottleYes") {
+        writeMessageBool = true;
         response = {
             "recipient": {
               "id": sender_psid
             },
             "message": {
-                "text": "Aight, Ima look for a bottle"
+                "text": "Aight, Ima look for a bottle" + writeMessageBool
             }
         }
     }
-    else if (received_message.quick_reply.payload === "writeBottleNo") {
+    else if (received_message.quick_reply.payload === "findBottleNo") {
+        writeMessageBool = false;
         response = {
             "recipient": {
               "id": sender_psid
             },
             "message": {
-                "text": "Aight, I'm going to go sleep"
+                "text": "Why would you wake me then -_-" + writeMessageBool
             }
         }
     }
@@ -40,16 +42,16 @@ function handleMessage(sender_psid, received_message) {
           "id": sender_psid
         },
         "message":{
-            "text": "Would you like to send your thoughts out into the ocean?",
+            "text": "Would you like for me to find a bottle?",
             "quick_replies":[
               {
                 "content_type":"text",
                 "title":"Yes",
-                "payload": "writeBottleYes"
+                "payload": "findBottleYes"
               },{
                 "content_type":"text",
                 "title":"No",
-                "payload": "writeBottleNo"
+                "payload": "findBottleNo"
               }
             ]
           }
