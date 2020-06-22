@@ -2,32 +2,44 @@ require('dotenv').config()
 const request = require('request');
 
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
-var writeMessageBool = false;
+
+var sendBottleBoolean = false;
+
 // Handles messages events
 function handleMessage(sender_psid, received_message) {
 
   let response;
-
-  if (received_message.quick_reply) {
-    if(received_message.quick_reply.payload === "findBottleYes") {
-        writeMessageBool = true;
+  if(sendBottleBoolean) {
+    response = {
+        "recipient": {
+            "id": sender_psid
+        },
+        "message": {
+            "text": `You're about to send "${received_message.text}"`
+        }
+    }
+  }
+  //If a quick reply
+  else if (received_message.quick_reply) {
+    if(received_message.quick_reply.payload === "sendBottleCommand") {
+        sendBottleBoolean = true;
         response = {
             "recipient": {
               "id": sender_psid
             },
             "message": {
-                "text": "Aight, Ima look for a bottle" + writeMessageBool
+                "text": "Splendid! What message would you like to send?"
             }
         }
     }
-    else if (received_message.quick_reply.payload === "findBottleNo") {
-        writeMessageBool = false;
+    else if (received_message.quick_reply.payload === "findBottleCommand") {
+        sendBottleBoolean = false;
         response = {
             "recipient": {
               "id": sender_psid
             },
             "message": {
-                "text": "Why would you wake me then -_-" + writeMessageBool
+                "text": "Okay, I will be searching for a bottle."
             }
         }
     }
@@ -42,16 +54,16 @@ function handleMessage(sender_psid, received_message) {
           "id": sender_psid
         },
         "message":{
-            "text": "Would you like for me to find a bottle?",
+            "text": "Would you like to send a bottle or have me search for one?",
             "quick_replies":[
               {
                 "content_type":"text",
-                "title":"Yes",
-                "payload": "findBottleYes"
+                "title":"Search",
+                "payload": "sendBottleCommand"
               },{
                 "content_type":"text",
-                "title":"No",
-                "payload": "findBottleNo"
+                "title":"Send",
+                "payload": "findBottleCommand"
               }
             ]
           }
