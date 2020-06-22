@@ -3,29 +3,43 @@ const request = require('request');
 
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 
+var sendBottleBoolean = false;
+
 // Handles messages events
 function handleMessage(sender_psid, received_message) {
 
   let response;
-
-  if (received_message.quick_reply) {
-    if(received_message.quick_reply.payload === "writeBottleYes") {
+  if(sendBottleBoolean) {
+    response = {
+        "recipient": {
+            "id": sender_psid
+        },
+        "message": {
+            "text": `You're about to send "${received_message.text}"`
+        }
+    }
+  }
+  //If a quick reply
+  else if (received_message.quick_reply) {
+    if(received_message.quick_reply.payload === "sendBottleCommand") {
+        sendBottleBoolean = true;
         response = {
             "recipient": {
               "id": sender_psid
             },
             "message": {
-                "text": "Aight, Ima look for a bottle"
+                "text": "Splendid! What message would you like to send?"
             }
         }
     }
-    else if (received_message.quick_reply.payload === "writeBottleNo") {
+    else if (received_message.quick_reply.payload === "findBottleCommand") {
+        sendBottleBoolean = false;
         response = {
             "recipient": {
               "id": sender_psid
             },
             "message": {
-                "text": "Aight, I'm going to go sleep"
+                "text": "Okay, I will be searching for a bottle."
             }
         }
     }
@@ -40,16 +54,16 @@ function handleMessage(sender_psid, received_message) {
           "id": sender_psid
         },
         "message":{
-            "text": "Would you like to send your thoughts out into the ocean?",
+            "text": "Would you like to send a bottle or have me search for one?",
             "quick_replies":[
               {
                 "content_type":"text",
-                "title":"Yes",
-                "payload": "writeBottleYes"
+                "title":"Search",
+                "payload": "sendBottleCommand"
               },{
                 "content_type":"text",
-                "title":"No",
-                "payload": "writeBottleNo"
+                "title":"Send",
+                "payload": "findBottleCommand"
               }
             ]
           }
