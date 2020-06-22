@@ -33,7 +33,7 @@ function callSendAPI(sender_psid, response) {
     "recipient": {
       "id": sender_psid
     },
-    "messaging_type": 'RESPONSE'
+    "messaging_type": 'RESPONSE',
     "message": {
         "text": response,
         "quick_replies": [
