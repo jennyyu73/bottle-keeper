@@ -39,11 +39,11 @@ function callSendAPI(sender_psid, response) {
           {
             "content_type":"text",
             "title":"Red",
-            "payload": "yes"
+            "payload": handlePostback(sender_psid, "Hi")
           },{
             "content_type":"text",
             "title":"Green",
-            "payload": "no"
+            "payload": handlePostback(sender_psid, "Hi")
           }
         ]
       }
