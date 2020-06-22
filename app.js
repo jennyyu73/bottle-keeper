@@ -9,16 +9,16 @@ function handleMessage(sender_psid, received_message) {
   let response;
 
   // Check if the message contains text
-  if (received_message.text) {    
+  if (received_message.text) {
 
     // Create the payload for a basic text message
     response = {
       "text": `You sent the message: "${received_message.text}"`
     }
-  }  
-  
+  }
+
   // Sends the response message
-  callSendAPI(sender_psid, response);    
+  callSendAPI(sender_psid, response);
 }
 
 // Handles messaging_postbacks events
@@ -33,7 +33,7 @@ function callSendAPI(sender_psid, response) {
     "recipient": {
       "id": sender_psid
     },
-    "messaging_type": 'RESPONSE'
+    "messaging_type": 'RESPONSE',
     "message": {
         "text": response,
         "quick_replies": [
@@ -63,7 +63,7 @@ function callSendAPI(sender_psid, response) {
     } else {
       console.error("Unable to send message:" + err);
     }
-  }); 
+  });
 }
 
 module.exports = { handlePostback, handleMessage, callSendAPI }
