@@ -33,21 +33,8 @@ function callSendAPI(sender_psid, response) {
     "recipient": {
       "id": sender_psid
     },
-    "message": {
-        "text": "Hi",
-        "quick_replies": [
-            {
-                "content_type":"text",
-                "title":"Yes"
-            },
-            {
-                "content_type":"text",
-                "title":"No"
-            }
-        ]
-    }
+    "message": response
   }
-  console.log("Token: " + process.env.PAGE_ACCESS_TOKEN)
   // Send the HTTP request to the Messenger Platform
   request({
     "uri": "https://graph.facebook.com/v7.0/me/messages",
