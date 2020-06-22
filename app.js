@@ -35,7 +35,7 @@ function callSendAPI(sender_psid, response) {
     },
     "message":{
         "text": "Would you like for me to find a bottle?",
-        "message_type": "searchResponse"
+        "message_type": "searchResponse",
         "quick_replies":[
           {
             "content_type":"text",
