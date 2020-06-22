@@ -34,15 +34,15 @@ function callSendAPI(sender_psid, response) {
       "id": sender_psid
     },
     "message":{
-        "text": "Pick a color:",
+        "text": "Would you like for me to find a bottle?",
         "quick_replies":[
           {
             "content_type":"text",
-            "title":"Red",
+            "title":"Yes",
             "payload": "DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_GREEN"
           },{
             "content_type":"text",
-            "title":"Green",
+            "title":"No",
             "payload": "DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_GREEN"
           }
         ]
