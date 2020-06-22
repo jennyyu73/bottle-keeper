@@ -23,7 +23,7 @@ function handleMessage(sender_psid, received_message) {
 
 // Handles messaging_postbacks events
 function handlePostback(sender_psid, received_postback) {
-
+    console.log("Hi")
 }
 
 // Sends response messages via the Send API
@@ -33,26 +33,19 @@ function callSendAPI(sender_psid, response) {
     "recipient": {
       "id": sender_psid
     },
-    "messaging_type": 'RESPONSE',
-    "message": {
-        "text": response,
-        "quick_replies": [
-            {
-                "content_type":"text",
-                "title":"Yes",
-                "payload":"User clicked Yes!",
-                "image_url":"https://upload.wikimedia.org/wikipedia/commons/3/37/Yes_4G_Logo.png"
-            },
-            {
-                "content_type":"text",
-                "title":"No",
-                "payload":"User click No!",
-                "image_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/ProhibitionSign2.svg/1200px-ProhibitionSign2.svg.png"
-            }
+    "message":{
+        "text": "Pick a color:",
+        "quick_replies":[
+          {
+            "content_type":"text",
+            "title":"Red",
+          },{
+            "content_type":"text",
+            "title":"Green",
+          }
         ]
-    }
+      }
   }
-
   // Send the HTTP request to the Messenger Platform
   request({
     "uri": "https://graph.facebook.com/v7.0/me/messages",
