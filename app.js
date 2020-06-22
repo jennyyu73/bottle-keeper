@@ -35,21 +35,7 @@ function callSendAPI(sender_psid, response) {
     },
     "messaging_type": 'RESPONSE',
     "message": {
-        "text": response,
-        "quick_replies": [
-            {
-                "content_type":"text",
-                "title":"Yes",
-                "payload":"User clicked Yes!",
-                "image_url":"https://upload.wikimedia.org/wikipedia/commons/3/37/Yes_4G_Logo.png"
-            },
-            {
-                "content_type":"text",
-                "title":"No",
-                "payload":"User click No!",
-                "image_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/ProhibitionSign2.svg/1200px-ProhibitionSign2.svg.png"
-            }
-        ]
+        "text": response
     }
   }
 
