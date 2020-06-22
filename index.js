@@ -4,10 +4,41 @@ var tool = require('./app')
 const
   express = require('express'),
   bodyParser = require('body-parser'),
-  app = express().use(bodyParser.json()); // creates express http server
+  app = express().use(bodyParser.json()), // creates express http server
+  mongoose = require('mongoose'),
+  dbRoute = 'mongodb+srv://jenny:hY132tQAy1OEr5ZH@cluster0-v0ju3.azure.mongodb.net/BottleKeeper?retryWrites=true&w=majority';
+const graphqlHTTP = require('express-graphql');
+const Bottles = require('./data/bottles'); //5ef11bb474d90735f0affc01
+const Tokens = require('./data/tokens'); //5ef11bd474d90735f0affc02
+const schema = require('./data/schema');
+
+// connects our back end code with the database
+mongoose.connect(
+  dbRoute,
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  }
+);
+
+//this represents our connection to the database
+let db = mongoose.connection;
+
+//if the connection (db) is successful, let the user know
+db.once("open", () => console.log("connected to the database"));
+
+// checks if connection with the database is invalid
+db.on("error", console.error.bind(console, "MongoDB connection error:"));
+
+//pass in access token to graphql end point
+app.use('/graphql', graphqlHTTP({
+    schema,
+    graphiql:true
+}));
 
 // Sets server port and logs message on success
-app.listen(process.env.PORT || 80, () => console.log('webhook is listening'));
+app.listen(process.env.PORT || 80,
+  () => console.log(`webhook is listening on port ${process.env.PORT || 80}`));
 
 // Creates the endpoint for our webhook
 app.post('/webhook', (req, res) => {
@@ -23,7 +54,6 @@ app.post('/webhook', (req, res) => {
       // Gets the body of the webhook event
       let webhook_event = entry.messaging[0];
       console.log(webhook_event);
-
 
       // Get the sender PSID
       let sender_psid = webhook_event.sender.id;
