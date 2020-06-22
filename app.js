@@ -13,7 +13,7 @@ function handleMessage(sender_psid, received_message) {
 
     // Create the payload for a basic text message
     response = {
-      "text": `You sent the message: "${received_message.text}". Now send me an image!`
+      "text": `You sent the message: "${received_message.text}"`
     }
   }  
   
@@ -33,7 +33,22 @@ function callSendAPI(sender_psid, response) {
     "recipient": {
       "id": sender_psid
     },
-    "message": response
+    "messaging_type": 'RESPONSE'
+    "message": {
+        "text": response,
+        "quick_replies": [
+            {
+                "content_type":"text",
+                "title":"Yes",
+                "payload":"User clicked Yes",
+            },
+            {
+                "content_type":"text",
+                "title":"No",
+                "payload":"User click No",
+            }
+        ]
+    }
   }
 
   // Send the HTTP request to the Messenger Platform
