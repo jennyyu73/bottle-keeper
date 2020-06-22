@@ -38,10 +38,12 @@ function callSendAPI(sender_psid, response) {
         "quick_replies":[
           {
             "content_type":"text",
-            "title":"Yes"
+            "title":"Yes",
+            "payload": "DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_GREEN"
           },{
             "content_type":"text",
-            "title":"No"
+            "title":"No",
+            "payload": "DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_GREEN"
           }
         ]
       }
