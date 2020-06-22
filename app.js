@@ -59,11 +59,11 @@ function handleMessage(sender_psid, received_message) {
               {
                 "content_type":"text",
                 "title":"Search",
-                "payload": "sendBottleCommand"
+                "payload": "findBottleCommand"
               },{
                 "content_type":"text",
                 "title":"Send",
-                "payload": "findBottleCommand"
+                "payload": "sendBottleCommand"
               }
             ]
           }
