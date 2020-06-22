@@ -39,9 +39,11 @@ function callSendAPI(sender_psid, response) {
           {
             "content_type":"text",
             "title":"Red",
+            "payload": "yes"
           },{
             "content_type":"text",
             "title":"Green",
+            "payload": "no"
           }
         ]
       }
