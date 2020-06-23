@@ -44,9 +44,8 @@ async function handleMessage(sender_psid, webhook_event) {
   }
   else if(received_message){
     if (received_message.quick_reply) {
-      sendBottleBoolean = true;
       if(received_message.quick_reply.payload === "sendBottleCommand") {
-        
+        sendBottleBoolean = true;
         response = {
           "recipient": {
             "id": sender_psid
