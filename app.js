@@ -77,9 +77,10 @@ async function handleMessage(sender_psid, webhook_event) {
     }
 
     // Check if the message contains text
-    else if (received_message.text && !received_message.metadata) {
+    else if (received_message.text) {
       // Create the payload for a basic text message
       console.log("TEXT PAYLOAD");
+      console.log(received_message.metadata)
       response = {
         "recipient": {
           "id": sender_psid
