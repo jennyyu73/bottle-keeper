@@ -13,6 +13,7 @@ function CleanJSONQuotesOnKeys(json) {
 async function handleMessage(sender_psid, webhook_event) {
   var received_message = webhook_event.message;
   let response;
+  console.log(sendBottleBoolean);
   if(sendBottleBoolean) {
     sendBottleBoolean = false;
     response = {
