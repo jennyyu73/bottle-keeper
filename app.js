@@ -5,6 +5,10 @@ const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 var fetch = require('node-fetch');
 var sendBottleBoolean = false;
 
+function CleanJSONQuotesOnKeys(json) {
+  return json.replace(/"(\w+)"\s*:/g, '$1:');
+}
+
 // Handles messages events
 async function handleMessage(sender_psid, webhook_event) {
   var received_message = webhook_event.message;
@@ -112,7 +116,7 @@ async function handleMessage(sender_psid, webhook_event) {
       };
       var tokenQuery = `
       mutation{
-        addToken(id: "5ef14940ec535c15b475a8d1", token: ${JSON.stringify(token)}){
+        addToken(id: "5ef14940ec535c15b475a8d1", token: ${CleanJSONQuotesOnKeys(JSON.stringify(token))}){
           tokens {
             token
             psid
