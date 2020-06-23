@@ -90,8 +90,8 @@ async function handleMessage(sender_psid, received_message) {
                 "payload": "sendBottleCommand"
               }
             ]
-          };
-      }
+          }
+      };
   }
 
   // Sends the response message
