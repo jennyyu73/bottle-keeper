@@ -54,15 +54,17 @@ async function handleMessage(sender_psid, webhook_event) {
     var pairsRes = await fetch("https://bottlekeeper.herokuapp.com/graphql?query=" + pairsQuery, {method: "POST"});
     var pairsResJson = await pairsRes.json();
     console.log('pairs result', JSON.stringify(pairsResJson));
-    for (let i = 0; i < pairsResJson.data.getMessageTokenPair.length; i ++){
-      responses.push({
-        "recipient": {
-          "one_time_notif_token": pairsResJson.data.getMessageTokenPair[i].token
-        },
-        "message": {
-          "text": `I found a bottle for you! It says "${pairsResJson.data.getMessageTokenPair[i].message}"`
-        }
-      });
+    if (pairsResJson.data.getMessageTokenPair != null){
+      for (let i = 0; i < pairsResJson.data.getMessageTokenPair.length; i ++){
+        responses.push({
+          "recipient": {
+            "one_time_notif_token": pairsResJson.data.getMessageTokenPair[i].token
+          },
+          "message": {
+            "text": `I found a bottle for you! It says "${pairsResJson.data.getMessageTokenPair[i].message}"`
+          }
+        });
+      }
     }
   }
   else if(received_message){
@@ -161,15 +163,17 @@ async function handleMessage(sender_psid, webhook_event) {
       var pairsRes = await fetch("https://bottlekeeper.herokuapp.com/graphql?query=" + pairsQuery, {method: "POST"});
       var pairsResJson = await pairsRes.json();
       console.log('pairs result', JSON.stringify(pairsResJson));
-      for (let i = 0; i < pairsResJson.data.getMessageTokenPair.length; i ++){
-        responses.push({
-          "recipient": {
-            "one_time_notif_token": pairsResJson.data.getMessageTokenPair[i].token
-          },
-          "message": {
-            "text": `I found a bottle for you! It says "${pairsResJson.data.getMessageTokenPair[i].message}"`
-          }
-        });
+      if (pairsResJson.data.getMessageTokenPair != null){
+        for (let i = 0; i < pairsResJson.data.getMessageTokenPair.length; i ++){
+          responses.push({
+            "recipient": {
+              "one_time_notif_token": pairsResJson.data.getMessageTokenPair[i].token
+            },
+            "message": {
+              "text": `I found a bottle for you! It says "${pairsResJson.data.getMessageTokenPair[i].message}"`
+            }
+          });
+        }
       }
     }
   console.log(sendBottleBoolean);
