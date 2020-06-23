@@ -173,7 +173,7 @@ async function handleMessage(sender_psid, webhook_event) {
       }
     }
   console.log(sendBottleBoolean);
-  if(received_message.metadata === "botResponseSend") {
+  if(received_message && received_message.metadata === "botResponseSend") {
     sendBottleBoolean = true;
   }
   // Sends the response message
