@@ -12,10 +12,9 @@ function CleanJSONQuotesOnKeys(json) {
 // Handles messages events
 async function handleMessage(sender_psid, webhook_event) {
   var received_message = webhook_event.message;
-  console.log(sendBottleBoolean);
   let response;
   if(sendBottleBoolean) {
-    console.log("SEND OUTPUT");
+    sendBottleBoolean = false;
     response = {
         "recipient": {
             "id": sender_psid
@@ -44,8 +43,9 @@ async function handleMessage(sender_psid, webhook_event) {
   }
   else if(received_message){
     if (received_message.quick_reply) {
+      sendBottleBoolean = true;
       if(received_message.quick_reply.payload === "sendBottleCommand") {
-        console.log("SEND BOTTLE COMMAND");
+        
         response = {
           "recipient": {
             "id": sender_psid
@@ -57,7 +57,7 @@ async function handleMessage(sender_psid, webhook_event) {
         };
       }
       else if (received_message.quick_reply.payload === "findBottleCommand") {
-        console.log("FIND BOTTLE COMMAND");
+        sendBottleBoolean = false;
         response = {
           "recipient": {
             "id": sender_psid
@@ -79,8 +79,7 @@ async function handleMessage(sender_psid, webhook_event) {
     // Check if the message contains text
     else if (received_message.text && received_message.metadata === undefined) {
       // Create the payload for a basic text message
-      console.log("TEXT PAYLOAD");
-      console.log(received_message.metadata)
+      sendBottleBoolean = false;
       response = {
         "recipient": {
           "id": sender_psid
