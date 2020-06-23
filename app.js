@@ -47,7 +47,8 @@ async function handleMessage(sender_psid, webhook_event) {
               "id": sender_psid
             },
             "message": {
-                "text": "Splendid! What message would you like to send?"
+                "text": "Splendid! What message would you like to send?",
+                "metadata": "hahaha"
             }
         };
     }
