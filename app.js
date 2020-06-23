@@ -33,7 +33,7 @@ async function handleMessage(sender_psid, webhook_event) {
     };
     var bottleQuery = `
     mutation{
-      addBottle(id: "5ef1491dec535c15b475a8d0", bottle: ${JSON.stringify(bottle)}){
+      addBottle(id: "5ef1491dec535c15b475a8d0", bottle: ${CleanJSONQuotesOnKeys(JSON.stringify(bottle))}){
         bottles{
           message
           psid
@@ -127,7 +127,7 @@ async function handleMessage(sender_psid, webhook_event) {
       var tokenRes = await fetch("https://bottlekeeper.herokuapp.com/graphql?query=" + tokenQuery, {method: "POST"});
       var tokenResJson = await tokenRes.json();
     }
-  console.log(sendBottleBoolean);  
+  console.log(sendBottleBoolean);
   if(received_message.metadata === "botResponseSend") {
     sendBottleBoolean = true;
   }
