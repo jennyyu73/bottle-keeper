@@ -12,19 +12,19 @@ function CleanJSONQuotesOnKeys(json) {
 // Handles messages events
 async function handleMessage(sender_psid, webhook_event) {
   var received_message = webhook_event.message;
-  let response;
+  let responses = [];
 
   if(sendBottleBoolean) {
     console.log("SEND BOTTLE");
     sendBottleBoolean = false;
-    response = {
+    responses.push({
         "recipient": {
             "id": sender_psid
         },
         "message": {
-            "text": `You're about to send "${received_message.text}"`
+            "text": `I'm sending your message "${received_message.text}" in a bottle right now.`
         }
-    };
+    });
 
     //add the bottle message to the database along with PSID
     var bottle = {
@@ -42,11 +42,33 @@ async function handleMessage(sender_psid, webhook_event) {
     }`;
     var bottleRes = await fetch("https://bottlekeeper.herokuapp.com/graphql?query=" + bottleQuery, {method: "POST"});
     var bottleResJson = await bottleRes.json();
+
+    //get all pairs of bottles that need to be sent
+    var pairsQuery = `
+    mutation{
+      getMessageTokenPair(bottlesId: "5ef1491dec535c15b475a8d0", tokensId: "5ef14940ec535c15b475a8d1"){
+        message
+        token
+      }
+    }`;
+    var pairsRes = await fetch("https://bottlekeeper.herokuapp.com/graphql?query=" + pairsQuery, {method: "POST"});
+    var pairsResJson = await pairsRes.json();
+    console.log('pairs result', JSON.stringify(pairsResJson));
+    for (let i = 0; i < pairsResJson.data.getMessageTokenPair.length; i ++){
+      responses.push({
+        "recipient": {
+          "one_time_notif_token": pairsResJson.data.getMessageTokenPair[i].token
+        },
+        "message": {
+          "text": pairsResJson.data.getMessageTokenPair[i].message
+        }
+      });
+    }
   }
   else if(received_message){
     if (received_message.quick_reply) {
       if(received_message.quick_reply.payload === "sendBottleCommand") {
-        response = {
+        responses.push({
           "recipient": {
             "id": sender_psid
           },
@@ -54,11 +76,11 @@ async function handleMessage(sender_psid, webhook_event) {
               "text": "Splendid! What message would you like to send?",
               "metadata": "botResponseSend"
           }
-        };
+        });
       }
       else if (received_message.quick_reply.payload === "findBottleCommand") {
         console.log("FIND")
-        response = {
+        responses.push({
           "recipient": {
             "id": sender_psid
           },
@@ -72,7 +94,7 @@ async function handleMessage(sender_psid, webhook_event) {
               }
             }
           }
-        };
+        });
       }
     }
 
@@ -80,7 +102,7 @@ async function handleMessage(sender_psid, webhook_event) {
     else if (received_message.text) {
       // Create the payload for a basic text message
       console.log("PAYLOAD")
-      response = {
+      responses.push({
         "recipient": {
           "id": sender_psid
         },
@@ -98,18 +120,18 @@ async function handleMessage(sender_psid, webhook_event) {
               }
             ]
           }
-        };
+        });
       }
     }
     else if (webhook_event.optin){
-      response = {
+      responses.push({
           "recipient": {
             "id": sender_psid
           },
           "message": {
               "text": "Will do!"
           }
-      };
+      });
       var token = {
         token: webhook_event.optin.one_time_notif_token,
         psid: sender_psid
@@ -132,7 +154,7 @@ async function handleMessage(sender_psid, webhook_event) {
     sendBottleBoolean = true;
   }
   // Sends the response message
-  callSendAPI(sender_psid, response);
+  callSendAPI(sender_psid, responses);
 }
 
 // Handles messaging_postbacks events
@@ -143,20 +165,22 @@ function handlePostback(sender_psid, received_postback) {
 // Sends response messages via the Send API
 function callSendAPI(sender_psid, response) {
   // Construct the message body
-  let request_body = response
-  // Send the HTTP request to the Messenger Platform
-  request({
-    "uri": "https://graph.facebook.com/v7.0/me/messages",
-    "qs": { "access_token": process.env.PAGE_ACCESS_TOKEN },
-    "method": "POST",
-    "json": request_body
-  }, (err, res, body) => {
-    if (!err) {
-      console.log('message sent!');
-    } else {
-      console.error("Unable to send message:" + err);
-    }
-  });
+  for (let i = 0; i < responses.length; i++){
+    let request_body = responses[i];
+    // Send the HTTP request to the Messenger Platform
+    request({
+      "uri": "https://graph.facebook.com/v7.0/me/messages",
+      "qs": { "access_token": process.env.PAGE_ACCESS_TOKEN },
+      "method": "POST",
+      "json": request_body
+    }, (err, res, body) => {
+      if (!err) {
+        console.log('message sent!');
+      } else {
+        console.error("Unable to send message:" + err);
+      }
+    });
+  }
 }
 
 module.exports = { handlePostback, handleMessage, callSendAPI }
