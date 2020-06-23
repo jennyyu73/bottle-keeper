@@ -62,11 +62,22 @@ async function handleMessage(sender_psid, received_message) {
               "payload": {
                 "template_type": "one_time_notif_req",
                 "title": "Would you like to be notified when I find a bottle?",
-                "payload": `By clicking "Notify Me", I'll send you the bottle as a message once I find one!`
+                "payload": "notify"
               }
             }
           }
         };
+    }
+    else if (received_message.optin){
+      response = {
+          "recipient": {
+            "id": sender_psid
+          },
+          "message": {
+              "text": "Will do!""
+          }
+      };
+      console.log('TOKEN IS:', received_message.optin.one_time_notif_token);
     }
   }
 
