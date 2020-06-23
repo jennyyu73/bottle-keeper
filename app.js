@@ -14,7 +14,7 @@ async function handleMessage(sender_psid, webhook_event) {
   var received_message = webhook_event.message;
   let response;
   
-  if(sendBottleBoolean) {
+  if(sendBottleBoolean && received_message.metadata === undefined) {
     console.log("SEND BOTTLE")
     sendBottleBoolean = false;
     response = {
@@ -80,7 +80,7 @@ async function handleMessage(sender_psid, webhook_event) {
     }
 
     // Check if the message contains text
-    else if (received_message.text && received_message.metadata === undefined) {
+    else if (received_message.text) {
       // Create the payload for a basic text message
       sendBottleBoolean = false;
       console.log("PAYLOAD")
