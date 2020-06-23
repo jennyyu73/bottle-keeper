@@ -163,7 +163,7 @@ function handlePostback(sender_psid, received_postback) {
 }
 
 // Sends response messages via the Send API
-function callSendAPI(sender_psid, response) {
+function callSendAPI(sender_psid, responses) {
   // Construct the message body
   for (let i = 0; i < responses.length; i++){
     let request_body = responses[i];
