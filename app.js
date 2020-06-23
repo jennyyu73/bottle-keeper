@@ -10,6 +10,7 @@ function handleMessage(sender_psid, received_message) {
 
   let response;
   if(sendBottleBoolean) {
+    console.log("HI")
     sendBottleBoolean = false;
     response = {
         "recipient": {
