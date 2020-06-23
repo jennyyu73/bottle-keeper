@@ -8,8 +8,8 @@ const
   mongoose = require('mongoose'),
   dbRoute = 'mongodb+srv://jenny:hY132tQAy1OEr5ZH@cluster0-v0ju3.azure.mongodb.net/BottleKeeper?retryWrites=true&w=majority';
 const graphqlHTTP = require('express-graphql');
-const Bottles = require('./data/bottles'); //5ef11bb474d90735f0affc01
-const Tokens = require('./data/tokens'); //5ef11bd474d90735f0affc02
+const Bottles = require('./data/bottles'); //5ef1491dec535c15b475a8d0
+const Tokens = require('./data/tokens'); //5ef14940ec535c15b475a8d1
 const schema = require('./data/schema');
 
 // connects our back end code with the database
@@ -37,8 +37,8 @@ app.use('/graphql', graphqlHTTP({
 }));
 
 // Sets server port and logs message on success
-app.listen(process.env.PORT || 80,
-  () => console.log(`webhook is listening on port ${process.env.PORT || 80}`));
+app.listen(process.env.PORT || 3000,
+  () => console.log(`webhook is listening on port ${process.env.PORT || 3000}`));
 
 // Creates the endpoint for our webhook
 app.post('/webhook', (req, res) => {

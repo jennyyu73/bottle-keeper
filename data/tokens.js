@@ -4,7 +4,10 @@ const Schema = mongoose.Schema;
 const TokensSchema = new Schema (
   {
     tokens: {
-      type: [String],
+      type: [{
+        token: String,
+        psid: String
+      }],
       required: true
     }
   }

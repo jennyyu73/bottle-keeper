@@ -4,7 +4,10 @@ const Schema = mongoose.Schema;
 const BottlesSchema = new Schema (
   {
     bottles: {
-      type: [String],
+      type: [{
+        message: String,
+        psid: String
+      }],
       required: true
     }
   }

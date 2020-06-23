@@ -9,11 +9,43 @@ const {
     GraphQLInputObjectType
 } = graphql;
 
+const BottleType = new GraphQLObjectType({
+  name: "Bottle",
+  fields: () => ({
+    message: {type: GraphQLString},
+    psid: {type: GraphQLString}
+  })
+});
+
+const BottleInputType = new GraphQLInputObjectType({
+  name: "BottleInput",
+  fields: () => ({
+    message: {type: GraphQLString},
+    psid: {type: GraphQLString}
+  })
+});
+
 const BottlesType = new GraphQLObjectType({
   name: "Bottles",
   fields: () => ({
     id: {type: GraphQLID},
-    bottles: {type: GraphQLList(GraphQLString)}
+    bottles: {type: GraphQLList(BottleType)}
+  })
+});
+
+const TokenType = new GraphQLObjectType({
+  name: "Token",
+  fields: () => ({
+    token: {type: GraphQLString},
+    psid: {type: GraphQLString}
+  })
+});
+
+const TokenInputType = new GraphQLInputObjectType({
+  name: "TokenInput",
+  fields: () => ({
+    token: {type: GraphQLString},
+    psid: {type: GraphQLString}
   })
 });
 
@@ -21,7 +53,15 @@ const TokensType = new GraphQLObjectType({
   name: "Tokens",
   fields: () => ({
     id: {type: GraphQLID},
-    tokens: {type: GraphQLList(GraphQLString)}
+    tokens: {type: GraphQLList(TokenType)}
+  })
+});
+
+const MessageTokenPairType = new GraphQLObjectType({
+  name: "MessageTokenPair",
+  fields: () => ({
+    message: {type: GraphQLString},
+    token: {type: GraphQLString}
   })
 });
 
@@ -87,11 +127,11 @@ const Mutation = new GraphQLObjectType({
       type: BottlesType,
       args: {
         id: {type: GraphQLString},
-        message: {type: GraphQLString}
+        bottle: {type: BottleInputType},
       },
       resolve(parent, args){
         var updated = Bottles.findByIdAndUpdate(args.id,
-        {$push: {"bottles": args.message}},
+        {$push: {"bottles": args.bottle}},
         (err) => {
           if (err) return res.json({ success: false, error: err });
           return updated;
@@ -103,7 +143,7 @@ const Mutation = new GraphQLObjectType({
       type: TokensType,
       args: {
         id: {type: GraphQLString},
-        token: {type: GraphQLString}
+        token: {type: TokenInputType}
       },
       resolve(parent, args){
         var updated = Tokens.findByIdAndUpdate(args.id,
@@ -116,7 +156,7 @@ const Mutation = new GraphQLObjectType({
     },
 
     removeBottle: {
-      type: GraphQLString,
+      type: BottleType,
       args: {
         id: {type: GraphQLString}
       },
@@ -124,17 +164,17 @@ const Mutation = new GraphQLObjectType({
         var bottlesObject = await Bottles.findById(args.id);
         var bottles = bottlesObject.bottles;
         if (bottles.length > 0){
-          var msg = bottles.shift();
+          var bottle = bottles.shift();
           bottlesObject.bottles = bottles;
           bottlesObject.save();
-          return msg;
+          return bottle;
         }
-        return "";
+        return null;
       }
     },
 
     removeToken: {
-      type: GraphQLString,
+      type: TokenType,
       args: {
         id: {type: GraphQLString}
       },
@@ -147,7 +187,51 @@ const Mutation = new GraphQLObjectType({
           tokensObject.save();
           return token;
         }
-        return "";
+        return null;
+      }
+    },
+
+    getMessageTokenPair: {
+      type: new GraphQLList(MessageTokenPairType),
+      args: {
+        bottlesId: {type: GraphQLString},
+        tokensId: {type: GraphQLString}
+      },
+      async resolve(parent, args){
+        var tokensObject = await Tokens.findById(args.tokensId);
+        var bottlesObject = await Bottles.findById(args.bottlesId);
+        var tokens = tokensObject.tokens;
+        var bottles = bottlesObject.bottles;
+        if (bottles.length == 0 || tokens.length == 0){
+          return null;
+        }
+        var pairs = [];
+
+        var i = 0;
+        while (i < tokens.length){
+          var j = 0;
+          var found = false;
+          while (j < bottles.length){
+            if (tokens[i].psid != bottles[j].psid){
+              pairs.push({
+                message: bottles[j].message,
+                token: tokens[i].token
+              });
+              tokens.splice(i, 1);
+              bottles.splice(j, 1);
+              found = true;
+              break;
+            }
+            else {
+              j ++;
+            }
+          }
+          if (!found)
+            i++;
+        }
+        tokensObject.save();
+        bottlesObject.save();
+        return pairs;
       }
     }
   }
