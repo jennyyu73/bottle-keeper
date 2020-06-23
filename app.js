@@ -12,9 +12,10 @@ function CleanJSONQuotesOnKeys(json) {
 // Handles messages events
 async function handleMessage(sender_psid, webhook_event) {
   var received_message = webhook_event.message;
-  console.log(sendBottleBoolean);
   let response;
+
   if(sendBottleBoolean) {
+    console.log("SEND BOTTLE");
     sendBottleBoolean = false;
     response = {
         "recipient": {
@@ -45,19 +46,18 @@ async function handleMessage(sender_psid, webhook_event) {
   else if(received_message){
     if (received_message.quick_reply) {
       if(received_message.quick_reply.payload === "sendBottleCommand") {
-        sendBottleBoolean = true;
         response = {
           "recipient": {
             "id": sender_psid
           },
           "message": {
               "text": "Splendid! What message would you like to send?",
-              "metadata": "hahaha"
+              "metadata": "botResponseSend"
           }
         };
       }
       else if (received_message.quick_reply.payload === "findBottleCommand") {
-        sendBottleBoolean = false;
+        console.log("FIND")
         response = {
           "recipient": {
             "id": sender_psid
@@ -79,6 +79,7 @@ async function handleMessage(sender_psid, webhook_event) {
     // Check if the message contains text
     else if (received_message.text) {
       // Create the payload for a basic text message
+      console.log("PAYLOAD")
       response = {
         "recipient": {
           "id": sender_psid
@@ -126,7 +127,10 @@ async function handleMessage(sender_psid, webhook_event) {
       var tokenRes = await fetch("https://bottlekeeper.herokuapp.com/graphql?query=" + tokenQuery, {method: "POST"});
       var tokenResJson = await tokenRes.json();
     }
-
+  console.log(sendBottleBoolean);  
+  if(received_message.metadata === "botResponseSend") {
+    sendBottleBoolean = true;
+  }
   // Sends the response message
   callSendAPI(sender_psid, response);
 }
