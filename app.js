@@ -6,7 +6,8 @@ var fetch = require('node-fetch');
 var sendBottleBoolean = false;
 
 // Handles messages events
-async function handleMessage(sender_psid, received_message) {
+async function handleMessage(sender_psid, webhook_event) {
+  var received_message = webhook_event.message;
   console.log(sendBottleBoolean);
   let response;
   if(sendBottleBoolean) {
@@ -68,7 +69,7 @@ async function handleMessage(sender_psid, received_message) {
           }
         };
     }
-    else if (received_message.optin){
+    else if (webhook_event.optin){
       response = {
           "recipient": {
             "id": sender_psid
@@ -77,7 +78,7 @@ async function handleMessage(sender_psid, received_message) {
               "text": "Will do!"
           }
       };
-      console.log('TOKEN IS:', received_message.optin.one_time_notif_token);
+      console.log('TOKEN IS:', webhook_event.optin.one_time_notif_token);
     }
   }
 
