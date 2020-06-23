@@ -38,21 +38,21 @@ async function handleMessage(sender_psid, webhook_event) {
     var bottleRes = await fetch("https://bottlekeeper.herokuapp.com/graphql?query=" + bottleQuery, {method: "POST"});
     var bottleResJson = await bottleRes.json();
   }
-  //If a quick reply
-  else if (received_message.quick_reply) {
-    if(received_message.quick_reply.payload === "sendBottleCommand") {
+  else if(received_message){
+    if (received_message.quick_reply) {
+      if(received_message.quick_reply.payload === "sendBottleCommand") {
         sendBottleBoolean = true;
         response = {
-            "recipient": {
-              "id": sender_psid
-            },
-            "message": {
-                "text": "Splendid! What message would you like to send?",
-                "metadata": "hahaha"
-            }
+          "recipient": {
+            "id": sender_psid
+          },
+          "message": {
+              "text": "Splendid! What message would you like to send?",
+              "metadata": "hahaha"
+          }
         };
-    }
-    else if (received_message.quick_reply.payload === "findBottleCommand") {
+      }
+      else if (received_message.quick_reply.payload === "findBottleCommand") {
         sendBottleBoolean = false;
         response = {
           "recipient": {
@@ -69,6 +69,32 @@ async function handleMessage(sender_psid, webhook_event) {
             }
           }
         };
+      }
+    }
+
+    // Check if the message contains text
+    else if (received_message.text) {
+      // Create the payload for a basic text message
+      response = {
+        "recipient": {
+          "id": sender_psid
+        },
+        "message":{
+            "text": "Would you like to send a bottle or have me search for one?",
+            "quick_replies":[
+              {
+                "content_type":"text",
+                "title":"Search",
+                "payload": "findBottleCommand"
+              },{
+                "content_type":"text",
+                "title":"Send",
+                "payload": "sendBottleCommand"
+              }
+            ]
+          }
+        };
+      }
     }
     else if (webhook_event.optin){
       console.log('inside optin!!!!!!!!!');
@@ -99,31 +125,6 @@ async function handleMessage(sender_psid, webhook_event) {
       var tokenResJson = await tokenRes.json();
       console.log('query response!', JSON.stringify(tokenResJson));
     }
-  }
-
-  // Check if the message contains text
-  else if (received_message.text) {
-    // Create the payload for a basic text message
-    response = {
-        "recipient": {
-          "id": sender_psid
-        },
-        "message":{
-            "text": "Would you like to send a bottle or have me search for one?",
-            "quick_replies":[
-              {
-                "content_type":"text",
-                "title":"Search",
-                "payload": "findBottleCommand"
-              },{
-                "content_type":"text",
-                "title":"Send",
-                "payload": "sendBottleCommand"
-              }
-            ]
-          }
-      };
-  }
 
   // Sends the response message
   callSendAPI(sender_psid, response);
