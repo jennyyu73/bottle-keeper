@@ -7,10 +7,9 @@ var sendBottleBoolean = false;
 
 // Handles messages events
 function handleMessage(sender_psid, received_message) {
-
+  console.log(sendBottleBoolean)
   let response;
   if(sendBottleBoolean) {
-    console.log("HI")
     sendBottleBoolean = false;
     response = {
         "recipient": {
