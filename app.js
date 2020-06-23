@@ -60,7 +60,7 @@ async function handleMessage(sender_psid, webhook_event) {
           "one_time_notif_token": pairsResJson.data.getMessageTokenPair[i].token
         },
         "message": {
-          "text": pairsResJson.data.getMessageTokenPair[i].message
+          "text": `I found a bottle for you! It says "${pairsResJson.data.getMessageTokenPair[i].message}"`
         }
       });
     }
@@ -148,6 +148,29 @@ async function handleMessage(sender_psid, webhook_event) {
 
       var tokenRes = await fetch("https://bottlekeeper.herokuapp.com/graphql?query=" + tokenQuery, {method: "POST"});
       var tokenResJson = await tokenRes.json();
+
+      //tries to send the bottles that it can
+      //get all pairs of bottles that need to be sent
+      var pairsQuery = `
+      mutation{
+        getMessageTokenPair(bottlesId: "5ef1491dec535c15b475a8d0", tokensId: "5ef14940ec535c15b475a8d1"){
+          message
+          token
+        }
+      }`;
+      var pairsRes = await fetch("https://bottlekeeper.herokuapp.com/graphql?query=" + pairsQuery, {method: "POST"});
+      var pairsResJson = await pairsRes.json();
+      console.log('pairs result', JSON.stringify(pairsResJson));
+      for (let i = 0; i < pairsResJson.data.getMessageTokenPair.length; i ++){
+        responses.push({
+          "recipient": {
+            "one_time_notif_token": pairsResJson.data.getMessageTokenPair[i].token
+          },
+          "message": {
+            "text": `I found a bottle for you! It says "${pairsResJson.data.getMessageTokenPair[i].message}"`
+          }
+        });
+      }
     }
   console.log(sendBottleBoolean);
   if(received_message.metadata === "botResponseSend") {
