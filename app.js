@@ -79,7 +79,22 @@ async function handleMessage(sender_psid, webhook_event) {
               "text": "Will do!"
           }
       };
-      console.log('TOKEN IS:', webhook_event.optin.one_time_notif_token);
+      var token = {
+        token: webhook_event.optin.one_time_notif_token,
+        psid: sender_psid
+      };
+      var tokenQuery = `
+      mutation{
+        addToken(id: "5ef14940ec535c15b475a8d1", token: ${JSON.stringify(token)}){
+          tokens {
+            token
+            psid
+          }
+        }
+      }`;
+
+      var tokenRes = await fetch("https://bottlekeeper.herokuapp.com/graphql?query=" + tokenQuery, {method: "POST"});
+      var tokenResJson = await tokenRes.json();
     }
   }
 
