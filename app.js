@@ -9,7 +9,7 @@ function handleMessage(sender_psid, received_message) {
   let response;
 
   if (received_message.quick_reply) {
-    if(received_message.quick_reply.payload === "findBottleYes") {
+    if(received_message.quick_reply.payload === "writeBottleYes") {
         response = {
             "recipient": {
               "id": sender_psid
@@ -19,7 +19,7 @@ function handleMessage(sender_psid, received_message) {
             }
         }
     }
-    else if (received_message.quick_reply.payload === "findBottleNo") {
+    else if (received_message.quick_reply.payload === "writeBottleNo") {
         response = {
             "recipient": {
               "id": sender_psid
@@ -45,11 +45,11 @@ function handleMessage(sender_psid, received_message) {
               {
                 "content_type":"text",
                 "title":"Yes",
-                "payload": "findBottleYes"
+                "payload": "writeBottleYes"
               },{
                 "content_type":"text",
                 "title":"No",
-                "payload": "findBottleNo"
+                "payload": "writeBottleNo"
               }
             ]
           }
