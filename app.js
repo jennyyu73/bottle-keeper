@@ -7,7 +7,7 @@ var sendBottleBoolean = false;
 
 // Handles messages events
 async function handleMessage(sender_psid, received_message) {
-  console.log(sendBottleBoolean)
+  console.log(sendBottleBoolean);
   let response;
   if(sendBottleBoolean) {
     sendBottleBoolean = false;
@@ -18,13 +18,13 @@ async function handleMessage(sender_psid, received_message) {
         "message": {
             "text": `You're about to send "${received_message.text}"`
         }
-    }
+    };
 
     //add the bottle message to the database along with PSID
     var bottle = {
       psid: sender_psid,
       message: received_message.text
-    }
+    };
     var bottleQuery = `
     mutation{
       addBottle(id: "5ef1491dec535c15b475a8d0", bottle: ${JSON.stringify(bottle)}){
@@ -48,24 +48,30 @@ async function handleMessage(sender_psid, received_message) {
             "message": {
                 "text": "Splendid! What message would you like to send?"
             }
-        }
+        };
     }
     else if (received_message.quick_reply.payload === "findBottleCommand") {
         sendBottleBoolean = false;
         response = {
-            "recipient": {
-              "id": sender_psid
-            },
-            "message": {
-                "text": "Okay, I will be searching for a bottle."
+          "recipient": {
+            "id": sender_psid
+          },
+          "message": {
+            "attachment": {
+              "type":"template",
+              "payload": {
+                "template_type": "one_time_notif_req",
+                "title": "Would you like to be notified when I find a bottle?",
+                "payload": `By clicking "Notify Me", I'll send you the bottle as a message once I find one!`
+              }
             }
-        }
+          }
+        };
     }
   }
 
   // Check if the message contains text
   else if (received_message.text) {
-
     // Create the payload for a basic text message
     response = {
         "recipient": {
@@ -84,7 +90,7 @@ async function handleMessage(sender_psid, received_message) {
                 "payload": "sendBottleCommand"
               }
             ]
-          }
+          };
       }
   }
 
@@ -94,7 +100,7 @@ async function handleMessage(sender_psid, received_message) {
 
 // Handles messaging_postbacks events
 function handlePostback(sender_psid, received_postback) {
-    console.log("Hi")
+    console.log("Hi");
 }
 
 // Sends response messages via the Send API
