@@ -101,7 +101,6 @@ async function handleMessage(sender_psid, webhook_event) {
       }
     }
     else if (webhook_event.optin){
-      console.log('inside optin!!!!!!!!!');
       response = {
           "recipient": {
             "id": sender_psid
@@ -124,10 +123,8 @@ async function handleMessage(sender_psid, webhook_event) {
         }
       }`;
 
-      console.log('QUERY', tokenQuery);
       var tokenRes = await fetch("https://bottlekeeper.herokuapp.com/graphql?query=" + tokenQuery, {method: "POST"});
       var tokenResJson = await tokenRes.json();
-      console.log('query response!', JSON.stringify(tokenResJson));
     }
 
   // Sends the response message
