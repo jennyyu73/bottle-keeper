@@ -6,11 +6,13 @@ const
   bodyParser = require('body-parser'),
   app = express().use(bodyParser.json()), // creates express http server
   mongoose = require('mongoose'),
+  fetch = require('node-fetch'),
   dbRoute = 'mongodb+srv://jenny:hY132tQAy1OEr5ZH@cluster0-v0ju3.azure.mongodb.net/BottleKeeper?retryWrites=true&w=majority';
 const graphqlHTTP = require('express-graphql');
 const Bottles = require('./data/bottles'); //5ef1491dec535c15b475a8d0
 const Tokens = require('./data/tokens'); //5ef14940ec535c15b475a8d1
 const schema = require('./data/schema');
+
 
 // connects our back end code with the database
 mongoose.connect(

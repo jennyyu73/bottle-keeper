@@ -2,11 +2,11 @@ require('dotenv').config()
 const request = require('request');
 
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
-
+var fetch = require('node-fetch');
 var sendBottleBoolean = false;
 
 // Handles messages events
-function handleMessage(sender_psid, received_message) {
+async function handleMessage(sender_psid, received_message) {
   console.log(sendBottleBoolean)
   let response;
   if(sendBottleBoolean) {
@@ -19,6 +19,23 @@ function handleMessage(sender_psid, received_message) {
             "text": `You're about to send "${received_message.text}"`
         }
     }
+
+    //add the bottle message to the database along with PSID
+    var bottle = {
+      psid: sender_psid,
+      message: received_message.text
+    }
+    var bottleQuery = `
+    mutation{
+      addBottle(id: "5ef1491dec535c15b475a8d0", bottle: ${JSON.stringify(bottle)}){
+        bottles{
+          message
+          psid
+        }
+      }
+    }`;
+    var bottleRes = await fetch("https://bottlekeeper.herokuapp.com/graphql?query=" + bottleQuery, {method: "POST"});
+    var bottleResJson = await bottleRes.json();
   }
   //If a quick reply
   else if (received_message.quick_reply) {
