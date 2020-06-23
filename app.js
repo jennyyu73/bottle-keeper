@@ -13,9 +13,9 @@ function CleanJSONQuotesOnKeys(json) {
 async function handleMessage(sender_psid, webhook_event) {
   var received_message = webhook_event.message;
   let response;
-  
-  if(sendBottleBoolean && received_message.metadata === undefined) {
-    console.log("SEND BOTTLE")
+
+  if(sendBottleBoolean) {
+    console.log("SEND BOTTLE");
     sendBottleBoolean = false;
     response = {
         "recipient": {
@@ -46,8 +46,6 @@ async function handleMessage(sender_psid, webhook_event) {
   else if(received_message){
     if (received_message.quick_reply) {
       if(received_message.quick_reply.payload === "sendBottleCommand") {
-        sendBottleBoolean = true;
-        console.log("SEND")
         response = {
           "recipient": {
             "id": sender_psid
@@ -59,7 +57,6 @@ async function handleMessage(sender_psid, webhook_event) {
         };
       }
       else if (received_message.quick_reply.payload === "findBottleCommand") {
-        sendBottleBoolean = false;
         console.log("FIND")
         response = {
           "recipient": {
@@ -82,7 +79,6 @@ async function handleMessage(sender_psid, webhook_event) {
     // Check if the message contains text
     else if (received_message.text) {
       // Create the payload for a basic text message
-      sendBottleBoolean = false;
       console.log("PAYLOAD")
       response = {
         "recipient": {
@@ -132,6 +128,9 @@ async function handleMessage(sender_psid, webhook_event) {
       var tokenResJson = await tokenRes.json();
     }
   console.log(sendBottleBoolean);  
+  if(received_message.metadata === "botResponseSend") {
+    sendBottleBoolean = true;
+  }
   // Sends the response message
   callSendAPI(sender_psid, response);
 }
