@@ -74,7 +74,7 @@ async function handleMessage(sender_psid, received_message) {
             "id": sender_psid
           },
           "message": {
-              "text": "Will do!""
+              "text": "Will do!"
           }
       };
       console.log('TOKEN IS:', received_message.optin.one_time_notif_token);
