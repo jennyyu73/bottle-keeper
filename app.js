@@ -14,7 +14,7 @@ async function handleMessage(sender_psid, webhook_event) {
   var received_message = webhook_event.message;
   let responses = [];
 
-  if(sendBottleBoolean) {
+  if(sendBottleBooleanAsk) {
     console.log("SEND BOTTLE");
     sendBottleBooleanAsk = false;
     responses.push({
@@ -176,9 +176,8 @@ async function handleMessage(sender_psid, webhook_event) {
         }
       }
     }
-  console.log(sendBottleBoolean);
   if(received_message && received_message.metadata === "botResponseSendAsk") {
-    sendBottleBoolean = true;
+    sendBottleBooleanAsk = true;
   }
   // Sends the response message
   callSendAPI(sender_psid, responses);
