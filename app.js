@@ -13,7 +13,7 @@ function CleanJSONQuotesOnKeys(json) {
 async function handleMessage(sender_psid, webhook_event) {
   var received_message = webhook_event.message;
   let response;
-  console.log(sendBottleBoolean);
+  
   if(sendBottleBoolean) {
     sendBottleBoolean = false;
     response = {
@@ -53,7 +53,7 @@ async function handleMessage(sender_psid, webhook_event) {
           },
           "message": {
               "text": "Splendid! What message would you like to send?",
-              "metadata": "hahaha"
+              "metadata": "botResponseSend"
           }
         };
       }
@@ -128,7 +128,7 @@ async function handleMessage(sender_psid, webhook_event) {
       var tokenRes = await fetch("https://bottlekeeper.herokuapp.com/graphql?query=" + tokenQuery, {method: "POST"});
       var tokenResJson = await tokenRes.json();
     }
-
+  console.log(sendBottleBoolean);  
   // Sends the response message
   callSendAPI(sender_psid, response);
 }
