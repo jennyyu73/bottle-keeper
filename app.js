@@ -46,7 +46,7 @@ async function handleMessage(sender_psid, received_message) {
               "id": sender_psid
             },
             "message": {
-                "text": "Splendid! What message would you like to send?"
+                "text": "Splendid! What message would you like to send?",
                 "metadata": "hahaha"
             }
         };
