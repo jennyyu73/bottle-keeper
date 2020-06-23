@@ -95,6 +95,7 @@ async function handleMessage(sender_psid, webhook_event) {
 
       var tokenRes = await fetch("https://bottlekeeper.herokuapp.com/graphql?query=" + tokenQuery, {method: "POST"});
       var tokenResJson = await tokenRes.json();
+      console.log('query response!', JSON.stringify(tokenResJson));
     }
   }
 
