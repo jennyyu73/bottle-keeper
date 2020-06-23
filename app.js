@@ -3,7 +3,7 @@ const request = require('request');
 
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 var fetch = require('node-fetch');
-var sendBottleBoolean = false;
+var sendBottleBooleanAsk = false;
 
 function CleanJSONQuotesOnKeys(json) {
   return json.replace(/"(\w+)"\s*:/g, '$1:');
@@ -16,7 +16,7 @@ async function handleMessage(sender_psid, webhook_event) {
 
   if(sendBottleBoolean) {
     console.log("SEND BOTTLE");
-    sendBottleBoolean = false;
+    sendBottleBooleanAsk = false;
     responses.push({
         "recipient": {
             "id": sender_psid
@@ -76,7 +76,7 @@ async function handleMessage(sender_psid, webhook_event) {
           },
           "message": {
               "text": "Splendid! What message would you like to send?",
-              "metadata": "botResponseSend"
+              "metadata": "botResponseSendAsk"
           }
         });
       }
@@ -177,7 +177,7 @@ async function handleMessage(sender_psid, webhook_event) {
       }
     }
   console.log(sendBottleBoolean);
-  if(received_message && received_message.metadata === "botResponseSend") {
+  if(received_message && received_message.metadata === "botResponseSendAsk") {
     sendBottleBoolean = true;
   }
   // Sends the response message
