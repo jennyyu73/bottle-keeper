@@ -15,6 +15,7 @@ async function handleMessage(sender_psid, webhook_event) {
   let response;
   
   if(sendBottleBoolean) {
+    console.log("SEND BOTTLE")
     sendBottleBoolean = false;
     response = {
         "recipient": {
@@ -46,6 +47,7 @@ async function handleMessage(sender_psid, webhook_event) {
     if (received_message.quick_reply) {
       if(received_message.quick_reply.payload === "sendBottleCommand") {
         sendBottleBoolean = true;
+        console.log("SEND")
         response = {
           "recipient": {
             "id": sender_psid
@@ -58,6 +60,7 @@ async function handleMessage(sender_psid, webhook_event) {
       }
       else if (received_message.quick_reply.payload === "findBottleCommand") {
         sendBottleBoolean = false;
+        console.log("FIND")
         response = {
           "recipient": {
             "id": sender_psid
@@ -80,6 +83,7 @@ async function handleMessage(sender_psid, webhook_event) {
     else if (received_message.text && received_message.metadata === undefined) {
       // Create the payload for a basic text message
       sendBottleBoolean = false;
+      console.log("PAYLOAD")
       response = {
         "recipient": {
           "id": sender_psid
