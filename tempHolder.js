@@ -1,7 +1,5 @@
 require('dotenv').config()
 const request = require('request');
-var Sentiment = require('sentiment');
-var sentiment = new Sentiment();
 
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 var fetch = require('node-fetch');
@@ -18,7 +16,6 @@ async function handleMessage(sender_psid, webhook_event) {
 
   if(sendBottleBoolean) {
     console.log("SEND BOTTLE");
-    console.log(sentiment.analyze(${received_message.text}).score);
     sendBottleBoolean = false;
     responses.push({
         "recipient": {
