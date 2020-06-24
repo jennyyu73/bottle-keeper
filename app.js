@@ -18,7 +18,7 @@ async function handleMessage(sender_psid, webhook_event) {
 
   if(sendBottleBoolean) {
     console.log("SEND BOTTLE");
-    console.log(sentiment.analyze(${received_message.text}).score);
+    console.log(sentiment.analyze(received_message.text).score);
     sendBottleBoolean = false;
     responses.push({
         "recipient": {
