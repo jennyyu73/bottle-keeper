@@ -40,28 +40,28 @@ async function handleMessage(sender_psid, webhook_event) {
             }
         });
         responses.push({
-        "recipient": {
-          "id": sender_psid
-        },
-        "message":{
-            "text": "Would you like to send a bottle or have me search for one?",
-            "quick_replies":[
-              {
-                "content_type":"text",
-                "title":"Search",
-                "payload": "findBottleCommand"
-              },{
-                "content_type":"text",
-                "title":"Send",
-                "payload": "sendBottleCommand"
-              }, {
-                "content_type":"text",
-                "title":"Sorry, Neither",
-                "payload": "cancelCommand"
+            "recipient": {
+              "id": sender_psid
+            },
+            "message":{
+                "text": "Would you like for me to do anything else?",
+                "quick_replies":[
+                  {
+                    "content_type":"text",
+                    "title":"Search",
+                    "payload": "findBottleCommand"
+                  },{
+                    "content_type":"text",
+                    "title":"Send",
+                    "payload": "sendBottleCommand"
+                  }, {
+                    "content_type":"text",
+                    "title":"Sorry, Neither",
+                    "payload": "cancelCommand"
+                  }
+                ]
               }
-            ]
-          }
-        });
+            });
 
         //add the bottle message to the database along with PSID
         var bottle = {
@@ -186,6 +186,29 @@ async function handleMessage(sender_psid, webhook_event) {
               "text": "Will do!"
           }
       });
+      responses.push({
+            "recipient": {
+              "id": sender_psid
+            },
+            "message":{
+                "text": "Would you like for me to do anything else?",
+                "quick_replies":[
+                  {
+                    "content_type":"text",
+                    "title":"Search",
+                    "payload": "findBottleCommand"
+                  },{
+                    "content_type":"text",
+                    "title":"Send",
+                    "payload": "sendBottleCommand"
+                  }, {
+                    "content_type":"text",
+                    "title":"Sorry, Neither",
+                    "payload": "cancelCommand"
+                  }
+                ]
+              }
+            });
       var token = {
         token: webhook_event.optin.one_time_notif_token,
         psid: sender_psid
