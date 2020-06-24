@@ -261,7 +261,7 @@ async function handleMessage(sender_psid, webhook_event) {
     sendBottleBoolean = true;
   }
   // Sends the response message
-  callSendAPI(sender_psid, responses);
+  await callSendAPI(sender_psid, responses);
   if (bottleResponses.length > 0){
     await sleep(10000);
     callSendAPI(sender_psid, bottleResponses);
@@ -274,12 +274,12 @@ function handlePostback(sender_psid, received_postback) {
 }
 
 // Sends response messages via the Send API
-function callSendAPI(sender_psid, responses) {
+async function callSendAPI(sender_psid, responses) {
   // Construct the message body
   for (let i = 0; i < responses.length; i++){
     let request_body = responses[i];
     // Send the HTTP request to the Messenger Platform
-    request({
+    await request({
       "uri": "https://graph.facebook.com/v7.0/me/messages",
       "qs": { "access_token": process.env.PAGE_ACCESS_TOKEN },
       "method": "POST",
