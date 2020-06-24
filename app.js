@@ -243,7 +243,7 @@ async function handleMessage(sender_psid, webhook_event) {
   callSendAPI(sender_psid, responses);
   console.log('done sending non bottles!!!!!!!!!!');
   if (bottleResponses.length > 0){
-    await sleep(10000);
+    await sleep(2000);
     callSendAPI(sender_psid, bottleResponses);
   }
 }
