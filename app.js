@@ -113,7 +113,7 @@ async function handleMessage(sender_psid, webhook_event) {
           }
         });
       }
-      else if (received_message.quick_reply.payload === "findBottleCommand") {
+      else if (received_message.quick_reply.payload === "cancelCommand") {
         responses.push({
           "recipient": {
             "id": sender_psid
