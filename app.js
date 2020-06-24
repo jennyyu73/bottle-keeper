@@ -287,7 +287,7 @@ async function callSendAPI(sender_psid, responses) {
       "method": "POST",
       "json": request_body
     });
-    var msgResJson = msgRes.json();
+    var msgResJson = await msgRes.json();
     /*
     request({
       "uri": "https://graph.facebook.com/v7.0/me/messages",
