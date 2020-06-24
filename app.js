@@ -190,7 +190,7 @@ async function handleMessage(sender_psid, webhook_event) {
             "id": sender_psid
           },
           "message": {
-              "text": "Will do!"
+              "text": "Will do! Wake me up if you want something more!"
           }
       });
       var token = {
