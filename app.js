@@ -11,10 +11,19 @@ function CleanJSONQuotesOnKeys(json) {
   return json.replace(/"(\w+)"\s*:/g, '$1:');
 }
 
+function sleep(milliseconds) {
+  const date = Date.now();
+  let currentDate = null;
+  do {
+    currentDate = Date.now();
+  } while (currentDate - date < milliseconds);
+}
+
 // Handles messages events
 async function handleMessage(sender_psid, webhook_event) {
   var received_message = webhook_event.message;
   let responses = [];
+  let bottleResponses = [];
 
   if(sendBottleBoolean) {
     console.log("SEND BOTTLE");
@@ -56,7 +65,7 @@ async function handleMessage(sender_psid, webhook_event) {
                     "payload": "sendBottleCommand"
                   }, {
                     "content_type":"text",
-                    "title":"Sorry, Neither",
+                    "title":"Sorry, neither",
                     "payload": "cancelCommand"
                   }
                 ]
@@ -93,7 +102,7 @@ async function handleMessage(sender_psid, webhook_event) {
         console.log('pairs result', JSON.stringify(pairsResJson));
         if (pairsResJson.data.getMessageTokenPair != null){
           for (let i = 0; i < pairsResJson.data.getMessageTokenPair.length; i ++){
-            responses.push({
+            bottleResponses.push({
               "recipient": {
                 "one_time_notif_token": pairsResJson.data.getMessageTokenPair[i].token
               },
@@ -240,7 +249,7 @@ async function handleMessage(sender_psid, webhook_event) {
       console.log('pairs result', JSON.stringify(pairsResJson));
       if (pairsResJson.data.getMessageTokenPair != null){
         for (let i = 0; i < pairsResJson.data.getMessageTokenPair.length; i ++){
-          responses.push({
+          bottleResponses.push({
             "recipient": {
               "one_time_notif_token": pairsResJson.data.getMessageTokenPair[i].token
             },
@@ -257,6 +266,8 @@ async function handleMessage(sender_psid, webhook_event) {
   }
   // Sends the response message
   callSendAPI(sender_psid, responses);
+  sleep(5000);
+  callSendAPI(sender_psid, bottleResponses);
 }
 
 // Handles messaging_postbacks events
