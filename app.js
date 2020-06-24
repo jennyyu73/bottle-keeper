@@ -1,5 +1,7 @@
 require('dotenv').config()
 const request = require('request');
+const util = require('util');
+const requestPromise = util.promisify(request);
 var Sentiment = require('sentiment');
 var sentiment = new Sentiment();
 
@@ -279,7 +281,7 @@ async function callSendAPI(sender_psid, responses) {
   for (let i = 0; i < responses.length; i++){
     let request_body = responses[i];
     // Send the HTTP request to the Messenger Platform
-    await request({
+    await requestPromise({
       "uri": "https://graph.facebook.com/v7.0/me/messages",
       "qs": { "access_token": process.env.PAGE_ACCESS_TOKEN },
       "method": "POST",
