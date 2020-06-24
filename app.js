@@ -18,56 +18,68 @@ async function handleMessage(sender_psid, webhook_event) {
 
   if(sendBottleBoolean) {
     console.log("SEND BOTTLE");
-    console.log(sentiment.analyze(received_message.text).score);
+    var score = sentiment.analyze(received_message.text).score;
     sendBottleBoolean = false;
-    responses.push({
-        "recipient": {
-            "id": sender_psid
-        },
-        "message": {
-            "text": `I'm sending your message "${received_message.text}" in a bottle right now.`
-        }
-    });
-
-    //add the bottle message to the database along with PSID
-    var bottle = {
-      psid: sender_psid,
-      message: received_message.text
-    };
-    var bottleQuery = `
-    mutation{
-      addBottle(id: "5ef1491dec535c15b475a8d0", bottle: ${CleanJSONQuotesOnKeys(JSON.stringify(bottle))}){
-        bottles{
-          message
-          psid
-        }
-      }
-    }`;
-    var bottleRes = await fetch("https://bottlekeeper.herokuapp.com/graphql?query=" + bottleQuery, {method: "POST"});
-    var bottleResJson = await bottleRes.json();
-
-    //get all pairs of bottles that need to be sent
-    var pairsQuery = `
-    mutation{
-      getMessageTokenPair(bottlesId: "5ef1491dec535c15b475a8d0", tokensId: "5ef14940ec535c15b475a8d1"){
-        message
-        token
-      }
-    }`;
-    var pairsRes = await fetch("https://bottlekeeper.herokuapp.com/graphql?query=" + pairsQuery, {method: "POST"});
-    var pairsResJson = await pairsRes.json();
-    console.log('pairs result', JSON.stringify(pairsResJson));
-    if (pairsResJson.data.getMessageTokenPair != null){
-      for (let i = 0; i < pairsResJson.data.getMessageTokenPair.length; i ++){
+    if(score < 0) {
         responses.push({
-          "recipient": {
-            "one_time_notif_token": pairsResJson.data.getMessageTokenPair[i].token
-          },
-          "message": {
-            "text": `I found a bottle for you! It says "${pairsResJson.data.getMessageTokenPair[i].message}"`
-          }
+            "recipient": {
+                "id": sender_psid
+            },
+            "message": {
+                "text": `Wow... that was mean of you. Wake up again once you have something nicer to say.`
+            }
         });
-      }
+    }
+    else {
+        responses.push({
+            "recipient": {
+                "id": sender_psid
+            },
+            "message": {
+                "text": `I'm sending your message "${received_message.text}" in a bottle right now.`
+            }
+        });
+
+        //add the bottle message to the database along with PSID
+        var bottle = {
+          psid: sender_psid,
+          message: received_message.text
+        };
+        var bottleQuery = `
+        mutation{
+          addBottle(id: "5ef1491dec535c15b475a8d0", bottle: ${CleanJSONQuotesOnKeys(JSON.stringify(bottle))}){
+            bottles{
+              message
+              psid
+            }
+          }
+        }`;
+        var bottleRes = await fetch("https://bottlekeeper.herokuapp.com/graphql?query=" + bottleQuery, {method: "POST"});
+        var bottleResJson = await bottleRes.json();
+
+        //get all pairs of bottles that need to be sent
+        var pairsQuery = `
+        mutation{
+          getMessageTokenPair(bottlesId: "5ef1491dec535c15b475a8d0", tokensId: "5ef14940ec535c15b475a8d1"){
+            message
+            token
+          }
+        }`;
+        var pairsRes = await fetch("https://bottlekeeper.herokuapp.com/graphql?query=" + pairsQuery, {method: "POST"});
+        var pairsResJson = await pairsRes.json();
+        console.log('pairs result', JSON.stringify(pairsResJson));
+        if (pairsResJson.data.getMessageTokenPair != null){
+          for (let i = 0; i < pairsResJson.data.getMessageTokenPair.length; i ++){
+            responses.push({
+              "recipient": {
+                "one_time_notif_token": pairsResJson.data.getMessageTokenPair[i].token
+              },
+              "message": {
+                "text": `I found a bottle for you! It says "${pairsResJson.data.getMessageTokenPair[i].message}"`
+              }
+            });
+          }
+        }
     }
   }
   else if(received_message){
