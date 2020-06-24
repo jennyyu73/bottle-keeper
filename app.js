@@ -284,6 +284,7 @@ async function callSendAPI(sender_psid, responses) {
     // Send the HTTP request to the Messenger Platform
     var msgRes = await fetch(`https://graph.facebook.com/v7.0/me/messages?access_token=${process.env.PAGE_ACCESS_TOKEN}`, {
       "method": "POST",
+      "recipient": request_body.recipient,
       "body": JSON.stringify(request_body)
     });
     var msgResJson = await msgRes.json();
