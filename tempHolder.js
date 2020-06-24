@@ -1,5 +1,9 @@
 require('dotenv').config()
 const request = require('request');
+const util = require('util');
+const requestPromise = util.promisify(request);
+var Sentiment = require('sentiment');
+var sentiment = new Sentiment();
 
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 var fetch = require('node-fetch');
@@ -9,62 +13,103 @@ function CleanJSONQuotesOnKeys(json) {
   return json.replace(/"(\w+)"\s*:/g, '$1:');
 }
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 // Handles messages events
 async function handleMessage(sender_psid, webhook_event) {
   var received_message = webhook_event.message;
   let responses = [];
+  let bottleResponses = [];
 
   if(sendBottleBoolean) {
     console.log("SEND BOTTLE");
+    var score = sentiment.analyze(received_message.text).score;
     sendBottleBoolean = false;
-    responses.push({
-        "recipient": {
-            "id": sender_psid
-        },
-        "message": {
-            "text": `I'm sending your message "${received_message.text}" in a bottle right now.`
-        }
-    });
-
-    //add the bottle message to the database along with PSID
-    var bottle = {
-      psid: sender_psid,
-      message: received_message.text
-    };
-    var bottleQuery = `
-    mutation{
-      addBottle(id: "5ef1491dec535c15b475a8d0", bottle: ${CleanJSONQuotesOnKeys(JSON.stringify(bottle))}){
-        bottles{
-          message
-          psid
-        }
-      }
-    }`;
-    var bottleRes = await fetch("https://bottlekeeper.herokuapp.com/graphql?query=" + bottleQuery, {method: "POST"});
-    var bottleResJson = await bottleRes.json();
-
-    //get all pairs of bottles that need to be sent
-    var pairsQuery = `
-    mutation{
-      getMessageTokenPair(bottlesId: "5ef1491dec535c15b475a8d0", tokensId: "5ef14940ec535c15b475a8d1"){
-        message
-        token
-      }
-    }`;
-    var pairsRes = await fetch("https://bottlekeeper.herokuapp.com/graphql?query=" + pairsQuery, {method: "POST"});
-    var pairsResJson = await pairsRes.json();
-    console.log('pairs result', JSON.stringify(pairsResJson));
-    if (pairsResJson.data.getMessageTokenPair != null){
-      for (let i = 0; i < pairsResJson.data.getMessageTokenPair.length; i ++){
+    if(score < 0) {
         responses.push({
-          "recipient": {
-            "one_time_notif_token": pairsResJson.data.getMessageTokenPair[i].token
-          },
-          "message": {
-            "text": `I found a bottle for you! It says "${pairsResJson.data.getMessageTokenPair[i].message}"`
-          }
+            "recipient": {
+                "id": sender_psid
+            },
+            "message": {
+                "text": `Let's try to send a more positive message.`
+            }
         });
-      }
+    }
+    else {
+        responses.push({
+            "recipient": {
+                "id": sender_psid
+            },
+            "message": {
+                "text": `I'm sending your message "${received_message.text}" in a bottle right now.`
+            }
+        });
+        responses.push({
+            "recipient": {
+              "id": sender_psid
+            },
+            "message":{
+                "text": "Would you like for me to do anything else?",
+                "quick_replies":[
+                  {
+                    "content_type":"text",
+                    "title":"Search",
+                    "payload": "findBottleCommand"
+                  },{
+                    "content_type":"text",
+                    "title":"Send",
+                    "payload": "sendBottleCommand"
+                  }, {
+                    "content_type":"text",
+                    "title":"Sorry, neither",
+                    "payload": "cancelCommand"
+                  }
+                ]
+              }
+            });
+
+        //add the bottle message to the database along with PSID
+        var bottle = {
+          psid: sender_psid,
+          message: received_message.text
+        };
+        var bottleQuery = `
+        mutation{
+          addBottle(id: "5ef1491dec535c15b475a8d0", bottle: ${CleanJSONQuotesOnKeys(JSON.stringify(bottle))}){
+            bottles{
+              message
+              psid
+            }
+          }
+        }`;
+        var bottleRes = await fetch("https://bottlekeeper.herokuapp.com/graphql?query=" + bottleQuery, {method: "POST"});
+        var bottleResJson = await bottleRes.json();
+
+        //get all pairs of bottles that need to be sent
+        var pairsQuery = `
+        mutation{
+          getMessageTokenPair(bottlesId: "5ef1491dec535c15b475a8d0", tokensId: "5ef14940ec535c15b475a8d1"){
+            message
+            token
+          }
+        }`;
+        var pairsRes = await fetch("https://bottlekeeper.herokuapp.com/graphql?query=" + pairsQuery, {method: "POST"});
+        var pairsResJson = await pairsRes.json();
+        console.log('pairs result', JSON.stringify(pairsResJson));
+        if (pairsResJson.data.getMessageTokenPair != null){
+          for (let i = 0; i < pairsResJson.data.getMessageTokenPair.length; i ++){
+            bottleResponses.push({
+              "recipient": {
+                "one_time_notif_token": pairsResJson.data.getMessageTokenPair[i].token
+              },
+              "message": {
+                "text": `I found a bottle for you! It says "${pairsResJson.data.getMessageTokenPair[i].message}"`
+              }
+            });
+          }
+        }
     }
   }
   else if(received_message){
@@ -98,6 +143,16 @@ async function handleMessage(sender_psid, webhook_event) {
           }
         });
       }
+      else if (received_message.quick_reply.payload === "cancelCommand") {
+        responses.push({
+          "recipient": {
+            "id": sender_psid
+          },
+          "message": {
+              "text": "Oh okay, wake me up when you need my services!"
+          }
+        });
+      }
     }
 
     // Check if the message contains text
@@ -119,6 +174,10 @@ async function handleMessage(sender_psid, webhook_event) {
                 "content_type":"text",
                 "title":"Send",
                 "payload": "sendBottleCommand"
+              }, {
+                "content_type":"text",
+                "title":"Sorry, Neither",
+                "payload": "cancelCommand"
               }
             ]
           }
@@ -134,6 +193,29 @@ async function handleMessage(sender_psid, webhook_event) {
               "text": "Will do!"
           }
       });
+      responses.push({
+            "recipient": {
+              "id": sender_psid
+            },
+            "message":{
+                "text": "Would you like for me to do anything else?",
+                "quick_replies":[
+                  {
+                    "content_type":"text",
+                    "title":"Search",
+                    "payload": "findBottleCommand"
+                  },{
+                    "content_type":"text",
+                    "title":"Send",
+                    "payload": "sendBottleCommand"
+                  }, {
+                    "content_type":"text",
+                    "title":"Sorry, Neither",
+                    "payload": "cancelCommand"
+                  }
+                ]
+              }
+            });
       var token = {
         token: webhook_event.optin.one_time_notif_token,
         psid: sender_psid
@@ -165,7 +247,7 @@ async function handleMessage(sender_psid, webhook_event) {
       console.log('pairs result', JSON.stringify(pairsResJson));
       if (pairsResJson.data.getMessageTokenPair != null){
         for (let i = 0; i < pairsResJson.data.getMessageTokenPair.length; i ++){
-          responses.push({
+          bottleResponses.push({
             "recipient": {
               "one_time_notif_token": pairsResJson.data.getMessageTokenPair[i].token
             },
@@ -182,6 +264,11 @@ async function handleMessage(sender_psid, webhook_event) {
   }
   // Sends the response message
   callSendAPI(sender_psid, responses);
+  console.log('done sending non bottles!!!!!!!!!!');
+  if (bottleResponses.length > 0){
+    await sleep(2000);
+    callSendAPI(sender_psid, bottleResponses);
+  }
 }
 
 // Handles messaging_postbacks events
@@ -190,11 +277,24 @@ function handlePostback(sender_psid, received_postback) {
 }
 
 // Sends response messages via the Send API
-function callSendAPI(sender_psid, responses) {
+async function callSendAPI(sender_psid, responses) {
   // Construct the message body
   for (let i = 0; i < responses.length; i++){
     let request_body = responses[i];
     // Send the HTTP request to the Messenger Platform
+    console.log('REQUEST', JSON.stringify({
+      method: "POST",
+      headers: { 'Content-Type':'application/json' },
+      body: JSON.stringify(request_body)
+    }));
+    var msgRes = await fetch(`https://graph.facebook.com/v7.0/me/messages?access_token=${process.env.PAGE_ACCESS_TOKEN}`, {
+      method: "POST",
+      headers: { 'Content-Type':'application/json' },
+      body: JSON.stringify(request_body)
+    });
+    var msgResJson = await msgRes.json();
+    console.log('resjson', JSON.stringify(msgResJson));
+    /*
     request({
       "uri": "https://graph.facebook.com/v7.0/me/messages",
       "qs": { "access_token": process.env.PAGE_ACCESS_TOKEN },
@@ -207,6 +307,7 @@ function callSendAPI(sender_psid, responses) {
         console.error("Unable to send message:" + err);
       }
     });
+    */
   }
 }
 
