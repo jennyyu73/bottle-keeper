@@ -11,12 +11,8 @@ function CleanJSONQuotesOnKeys(json) {
   return json.replace(/"(\w+)"\s*:/g, '$1:');
 }
 
-function sleep(milliseconds) {
-  const date = Date.now();
-  let currentDate = null;
-  do {
-    currentDate = Date.now();
-  } while (currentDate - date < milliseconds);
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 // Handles messages events
@@ -266,8 +262,10 @@ async function handleMessage(sender_psid, webhook_event) {
   }
   // Sends the response message
   callSendAPI(sender_psid, responses);
-  sleep(5000);
-  callSendAPI(sender_psid, bottleResponses);
+  if (bottleResponses.length > 0){
+    await sleep(5000);
+    callSendAPI(sender_psid, bottleResponses);
+  }
 }
 
 // Handles messaging_postbacks events
