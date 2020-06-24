@@ -282,10 +282,9 @@ async function callSendAPI(sender_psid, responses) {
   for (let i = 0; i < responses.length; i++){
     let request_body = responses[i];
     // Send the HTTP request to the Messenger Platform
-    var msgRes = await fetch("https://graph.facebook.com/v7.0/me/messages", {
-      "qs": { "access_token": process.env.PAGE_ACCESS_TOKEN },
+    var msgRes = await fetch(`https://graph.facebook.com/v7.0/me/messages?access_token=${process.env.PAGE_ACCESS_TOKEN}`, {
       "method": "POST",
-      "json": JSON.stringify(request_body)
+      "body": JSON.stringify(request_body)
     });
     var msgResJson = await msgRes.json();
     console.log('resjson', JSON.stringify(msgResJson));
