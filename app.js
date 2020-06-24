@@ -33,7 +33,7 @@ async function handleMessage(sender_psid, webhook_event) {
                 "id": sender_psid
             },
             "message": {
-                "text": `Let's try to send a more positive message.`
+                "text": `Let's try to send a more positive message. Wake me up when you're ready!`
             }
         });
     }
