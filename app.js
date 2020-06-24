@@ -164,7 +164,7 @@ async function handleMessage(sender_psid, webhook_event) {
           "id": sender_psid
         },
         "message":{
-            "text": "Would you like to send a bottle or have me search for one?",
+            "text": "Hey {{user_first_name}}! Would you like to send a bottle or have me search for one?",
             "quick_replies":[
               {
                 "content_type":"text",
@@ -252,7 +252,7 @@ async function handleMessage(sender_psid, webhook_event) {
               "one_time_notif_token": pairsResJson.data.getMessageTokenPair[i].token
             },
             "message": {
-              "text": `I found a bottle for you! It says "${pairsResJson.data.getMessageTokenPair[i].message}"`
+              "text": `Hey {{user_first_name}}! I found a bottle for you! It says "${pairsResJson.data.getMessageTokenPair[i].message}"`
             }
           });
         }
