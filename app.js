@@ -20,6 +20,7 @@ async function handleMessage(sender_psid, webhook_event) {
     console.log("SEND BOTTLE");
     var score = sentiment.analyze(received_message.text).score;
     sendBottleBoolean = false;
+<<<<<<< HEAD
     if(score < 0) {
         responses.push({
             "recipient": {
@@ -103,6 +104,56 @@ async function handleMessage(sender_psid, webhook_event) {
             });
           }
         }
+=======
+    responses.push({
+        "recipient": {
+            "id": sender_psid
+        },
+        "message": {
+            "text": `I'm sending your message "${received_message.text}" in a bottle right now.`
+        }
+    });
+
+    //add the bottle message to the database along with PSID
+    var bottle = {
+      psid: sender_psid,
+      message: received_message.text
+    };
+    var bottleQuery = `
+    mutation{
+      addBottle(id: "5ef1491dec535c15b475a8d0", bottle: ${CleanJSONQuotesOnKeys(JSON.stringify(bottle))}){
+        bottles{
+          message
+          psid
+        }
+      }
+    }`;
+    var bottleRes = await fetch("https://bottlekeeper.herokuapp.com/graphql?query=" + bottleQuery, {method: "POST"});
+    var bottleResJson = await bottleRes.json();
+
+    //get all pairs of bottles that need to be sent
+    var pairsQuery = `
+    mutation{
+      getMessageTokenPair(bottlesId: "5ef1491dec535c15b475a8d0", tokensId: "5ef14940ec535c15b475a8d1"){
+        message
+        token
+      }
+    }`;
+    var pairsRes = await fetch("https://bottlekeeper.herokuapp.com/graphql?query=" + pairsQuery, {method: "POST"});
+    var pairsResJson = await pairsRes.json();
+    console.log('pairs result', JSON.stringify(pairsResJson));
+    if (pairsResJson.data.getMessageTokenPair != null){
+      for (let i = 0; i < pairsResJson.data.getMessageTokenPair.length; i ++){
+        responses.push({
+          "recipient": {
+            "one_time_notif_token": pairsResJson.data.getMessageTokenPair[i].token
+          },
+          "message": {
+            "text": `I found a bottle for you! It says "${pairsResJson.data.getMessageTokenPair[i].message}"`
+          }
+        });
+      }
+>>>>>>> e51884b82bb03d5592d92a30476da8d4ac6f92ce
     }
   }
   else if(received_message){
@@ -135,6 +186,7 @@ async function handleMessage(sender_psid, webhook_event) {
             }
           }
         });
+<<<<<<< HEAD
       }
       else if (received_message.quick_reply.payload === "cancelCommand") {
         responses.push({
@@ -145,6 +197,8 @@ async function handleMessage(sender_psid, webhook_event) {
               "text": "Oh okay, wake me up when you need my services!"
           }
         });
+=======
+>>>>>>> e51884b82bb03d5592d92a30476da8d4ac6f92ce
       }
     }
 
@@ -186,6 +240,7 @@ async function handleMessage(sender_psid, webhook_event) {
               "text": "Will do!"
           }
       });
+<<<<<<< HEAD
       responses.push({
             "recipient": {
               "id": sender_psid
@@ -209,6 +264,8 @@ async function handleMessage(sender_psid, webhook_event) {
                 ]
               }
             });
+=======
+>>>>>>> e51884b82bb03d5592d92a30476da8d4ac6f92ce
       var token = {
         token: webhook_event.optin.one_time_notif_token,
         psid: sender_psid

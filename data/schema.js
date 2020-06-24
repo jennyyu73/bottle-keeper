@@ -145,13 +145,28 @@ const Mutation = new GraphQLObjectType({
         id: {type: GraphQLString},
         token: {type: TokenInputType}
       },
-      resolve(parent, args){
+      async resolve(parent, args){
+        /*
         var updated = Tokens.findByIdAndUpdate(args.id,
         {$push: {"tokens": args.token}},
         (err) => {
           if (err) return res.json({ success: false, error: err });
           return updated;
         });
+        */
+        //only adds token if user psid not already in list of tokens
+        var tokensObject = await Tokens.findById(args.id);
+        var tokens = tokensObject.tokens;
+        var notInList = true;
+        for (var i = 0; i < tokens.length; i++){
+          if (tokens[i].psid == args.token.psid)
+            notInList = false;
+        }
+        if (notInList)
+          tokens.push(args.token);
+        tokensObject.tokens = tokens;
+        tokensObject.save();
+        return tokensObject;
       }
     },
 
@@ -203,7 +218,7 @@ const Mutation = new GraphQLObjectType({
         var tokens = tokensObject.tokens;
         var bottles = bottlesObject.bottles;
         if (bottles.length == 0 || tokens.length == 0){
-          return null;
+          return [];
         }
         var pairs = [];
 
