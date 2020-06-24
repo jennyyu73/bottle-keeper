@@ -17,18 +17,6 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function doRequest(url) {
-  return new Promise(function (resolve, reject) {
-    request(url, (err, res, body) => {
-      if (!err) {
-        console.log('message sent!');
-      } else {
-        console.error("Unable to send message:" + err);
-      }
-    });
-  });
-}
-
 // Handles messages events
 async function handleMessage(sender_psid, webhook_event) {
   var received_message = webhook_event.message;
@@ -276,7 +264,7 @@ async function handleMessage(sender_psid, webhook_event) {
   }
   // Sends the response message
   await callSendAPI(sender_psid, responses);
-  console.log('done sending non bottles');
+  console.log('done sending non bottles!!!!!!!!!!');
   if (bottleResponses.length > 0){
     await sleep(2000);
     callSendAPI(sender_psid, bottleResponses);
@@ -294,12 +282,26 @@ async function callSendAPI(sender_psid, responses) {
   for (let i = 0; i < responses.length; i++){
     let request_body = responses[i];
     // Send the HTTP request to the Messenger Platform
-    await doRequest({
-      "uri": "https://graph.facebook.com/v7.0/me/messages",
+    var msgRes = await fetch("https://graph.facebook.com/v7.0/me/messages", {
       "qs": { "access_token": process.env.PAGE_ACCESS_TOKEN },
       "method": "POST",
       "json": request_body
     });
+    var msgResJson = msgRes.json();
+    /*
+    request({
+      "uri": "https://graph.facebook.com/v7.0/me/messages",
+      "qs": { "access_token": process.env.PAGE_ACCESS_TOKEN },
+      "method": "POST",
+      "json": request_body
+    }, (err, res, body) => {
+      if (!err) {
+        console.log('message sent!');
+      } else {
+        console.error("Unable to send message:" + err);
+      }
+    });
+    */
   }
 }
 
