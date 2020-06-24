@@ -113,6 +113,16 @@ async function handleMessage(sender_psid, webhook_event) {
           }
         });
       }
+      else if (received_message.quick_reply.payload === "findBottleCommand") {
+        responses.push({
+          "recipient": {
+            "id": sender_psid
+          },
+          "message": {
+              "text": "Oh okay, wake me up when you need my services!"
+          }
+        });
+      }
     }
 
     // Check if the message contains text
@@ -134,6 +144,10 @@ async function handleMessage(sender_psid, webhook_event) {
                 "content_type":"text",
                 "title":"Send",
                 "payload": "sendBottleCommand"
+              }, {
+                "content_type":"text",
+                "title":"Sorry, Neither",
+                "payload": "cancelCommand"
               }
             ]
           }
