@@ -285,9 +285,10 @@ async function callSendAPI(sender_psid, responses) {
     var msgRes = await fetch("https://graph.facebook.com/v7.0/me/messages", {
       "qs": { "access_token": process.env.PAGE_ACCESS_TOKEN },
       "method": "POST",
-      "json": request_body
+      "json": JSON.stringify(request_body)
     });
     var msgResJson = await msgRes.json();
+    console.log('resjson', JSON.stringify(msgResJson));
     /*
     request({
       "uri": "https://graph.facebook.com/v7.0/me/messages",
