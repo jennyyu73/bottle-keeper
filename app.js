@@ -24,7 +24,6 @@ async function handleMessage(sender_psid, webhook_event) {
   let bottleResponses = [];
 
   if(sendBottleBoolean) {
-    console.log("SEND BOTTLE");
     var score = sentiment.analyze(received_message.text).score;
     sendBottleBoolean = false;
     if(score < 0) {
@@ -97,7 +96,6 @@ async function handleMessage(sender_psid, webhook_event) {
         }`;
         var pairsRes = await fetch("https://bottlekeeper.herokuapp.com/graphql?query=" + pairsQuery, {method: "POST"});
         var pairsResJson = await pairsRes.json();
-        console.log('pairs result', JSON.stringify(pairsResJson));
         if (pairsResJson.data.getMessageTokenPair != null){
           for (let i = 0; i < pairsResJson.data.getMessageTokenPair.length; i ++){
             bottleResponses.push({
@@ -126,7 +124,6 @@ async function handleMessage(sender_psid, webhook_event) {
         });
       }
       else if (received_message.quick_reply.payload === "findBottleCommand") {
-        console.log("FIND")
         responses.push({
           "recipient": {
             "id": sender_psid
@@ -158,7 +155,6 @@ async function handleMessage(sender_psid, webhook_event) {
     // Check if the message contains text
     else if (received_message.text) {
       // Create the payload for a basic text message
-      console.log("PAYLOAD")
       responses.push({
         "recipient": {
           "id": sender_psid
@@ -221,7 +217,6 @@ async function handleMessage(sender_psid, webhook_event) {
       }`;
       var pairsRes = await fetch("https://bottlekeeper.herokuapp.com/graphql?query=" + pairsQuery, {method: "POST"});
       var pairsResJson = await pairsRes.json();
-      console.log('pairs result', JSON.stringify(pairsResJson));
       if (pairsResJson.data.getMessageTokenPair != null){
         for (let i = 0; i < pairsResJson.data.getMessageTokenPair.length; i ++){
           bottleResponses.push({
@@ -235,13 +230,12 @@ async function handleMessage(sender_psid, webhook_event) {
         }
       }
     }
-  console.log(sendBottleBoolean);
+
   if(received_message && received_message.metadata === "botResponseSend") {
     sendBottleBoolean = true;
   }
   // Sends the response message
   callSendAPI(sender_psid, responses);
-  console.log('done sending non bottles!!!!!!!!!!');
   if (bottleResponses.length > 0){
     await sleep(2000);
     callSendAPI(sender_psid, bottleResponses);
@@ -250,7 +244,7 @@ async function handleMessage(sender_psid, webhook_event) {
 
 // Handles messaging_postbacks events
 function handlePostback(sender_psid, received_postback) {
-    console.log("Hi");
+    return;
 }
 
 // Sends response messages via the Send API
@@ -259,32 +253,12 @@ async function callSendAPI(sender_psid, responses) {
   for (let i = 0; i < responses.length; i++){
     let request_body = responses[i];
     // Send the HTTP request to the Messenger Platform
-    console.log('REQUEST', JSON.stringify({
-      method: "POST",
-      headers: { 'Content-Type':'application/json' },
-      body: JSON.stringify(request_body)
-    }));
     var msgRes = await fetch(`https://graph.facebook.com/v7.0/me/messages?access_token=${process.env.PAGE_ACCESS_TOKEN}`, {
       method: "POST",
       headers: { 'Content-Type':'application/json' },
       body: JSON.stringify(request_body)
     });
     var msgResJson = await msgRes.json();
-    console.log('resjson', JSON.stringify(msgResJson));
-    /*
-    request({
-      "uri": "https://graph.facebook.com/v7.0/me/messages",
-      "qs": { "access_token": process.env.PAGE_ACCESS_TOKEN },
-      "method": "POST",
-      "json": request_body
-    }, (err, res, body) => {
-      if (!err) {
-        console.log('message sent!');
-      } else {
-        console.error("Unable to send message:" + err);
-      }
-    });
-    */
   }
 }
 
