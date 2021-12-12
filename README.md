@@ -3,7 +3,7 @@ Messenger bot with quick replies and one-time notification
 made by Jun Kim and Jenny Yu
 
 # Purpose
-This Messenger bot simulates the experience of sending and finding messages in a bottle, hopefully as a way to bring us all closer together in these trying times. To interact with it live, simply go to this Facebook page and send a message: https://www.facebook.com/Bottle-Keeper-110293290724548 
+This Messenger bot simulates the experience of sending and finding messages in a bottle, hopefully as a way to bring us all closer together in these trying times. Note, we currently do not have the server and MongoDB cluster actively running due to prolonged inactivity, but you can find a short demo video here: https://www.youtube.com/watch?v=ScYBarpqWrs. 
 
 # Technology
 - Nodejs
